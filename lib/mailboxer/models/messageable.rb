@@ -185,6 +185,29 @@ module Mailboxer
         end
       end
 
+      #Mark the object as archived for messageable.
+      #
+      #Object can be:
+      #* A Receipt
+      #* A Message
+      #* A Notification
+      #* A Conversation
+      #* An array with any of them
+      def archive(obj)
+        case obj
+        when Receipt
+          return obj.move_to_archive if obj.receiver == self
+        when Message, Notification
+          obj.move_to_archive(self)
+        when Conversation
+          obj.move_to_archive(self)
+        when Array
+          obj.map{ |sub_obj| archive(sub_obj) }
+        else
+        return nil
+        end
+      end
+
       def search_messages(query)
         @search = Receipt.search do
           fulltext query

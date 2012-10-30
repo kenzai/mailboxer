@@ -142,6 +142,12 @@ class Notification < ActiveRecord::Base
     return self.receipt_for(participant).untrash
   end
 
+  #Move the notification to the archive
+  def move_to_archive(participant)
+    return if participant.nil?
+    return self.receipt_for(participant).move_to_archive
+  end
+
 
   include ActionView::Helpers::SanitizeHelper
 

@@ -22,6 +22,7 @@ class Receipt < ActiveRecord::Base
   scope :inbox, where(:mailbox_type => "inbox")
   scope :trash, where(:trashed => true)
   scope :not_trash, where(:trashed => false)
+  scope :archive, where(:mailbox_type => 'archive', :trashed => false)
   scope :is_read, where(:is_read => true)
   scope :is_unread, where(:is_read => false)
 
@@ -45,6 +46,11 @@ class Receipt < ActiveRecord::Base
     #Marks all the receipts from the relation as not trashed
     def untrash(options={})
       update_receipts({:trashed => false}, options)
+    end
+
+    #Marks all the receipts from the relation as archived
+    def move_to_archive(options={})
+      update_receipts({:mailbox_type => :archive, :trashed => false}, options)
     end
 
     #Moves all the receipts from the relation to inbox
@@ -94,6 +100,10 @@ class Receipt < ActiveRecord::Base
   #Marks the receipt as not trashed
   def untrash
     update_attributes(:trashed => false)
+  end
+
+  def move_to_archive
+    update_attributes(:archived => true)
   end
 
   #Moves the receipt to inbox

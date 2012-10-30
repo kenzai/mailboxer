@@ -13,7 +13,7 @@ class Mailbox
     if (options[:read].present? and options[:read]==false) or (options[:unread].present? and options[:unread]==true)
       notifs = notifs.unread
     end
-    return notifs 
+    return notifs
   end
 
   #Returns the conversations for the messageable
@@ -24,6 +24,7 @@ class Mailbox
   #  * "inbox"
   #  * "sentbox"
   #  * "trash"
+  #  * "archive"
   #
   #* :read=false
   #* :unread=true
@@ -39,6 +40,8 @@ class Mailbox
         conv = Conversation.sentbox(@messageable)
       when 'trash'
         conv = Conversation.trash(@messageable)
+      when 'archive'
+        conv = Conversation.archive(@messageable)
       end
     end
 
@@ -70,6 +73,14 @@ class Mailbox
   #Same as conversations({:mailbox_type => 'trash'})
   def trash(options={})
     options = options.merge(:mailbox_type => 'trash')
+    return self.conversations(options)
+  end
+
+  #Returns the conversations in the archive of messageable
+  #
+  #Same as conversations({:mailbox_type => 'archive'})
+  def archive(options={})
+    options = options.merge(:mailbox_type => 'archive')
     return self.conversations(options)
   end
 

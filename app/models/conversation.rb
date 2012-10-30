@@ -23,6 +23,9 @@ class Conversation < ActiveRecord::Base
   scope :trash, lambda {|participant|
     participant(participant).merge(Receipt.trash)
   }
+  scope :archive, lambda {|participant|
+    participant(participant).merge(Receipt.archive.not_trash)
+  }
   scope :unread,  lambda {|participant|
     participant(participant).merge(Receipt.is_unread)
   }
@@ -49,6 +52,12 @@ class Conversation < ActiveRecord::Base
 	def untrash(participant)
 		return if participant.nil?
 		return self.receipts_for(participant).untrash
+	end
+
+  #Move the conversation to the archive for one of the participants
+	def move_to_archive(participant)
+		return if participant.nil?
+		return self.receipts_for(participant).move_to_archive
 	end
 
   #Returns an array of participants
@@ -116,6 +125,12 @@ class Conversation < ActiveRecord::Base
 	def is_completely_trashed?(participant)
 		return false if participant.nil?
 		return self.receipts_for(participant).trash.count == self.receipts_for(participant).count
+	end
+
+  #Returns true if the participant has at least one archived message of the conversation
+	def is_archived?(participant)
+		return false if participant.nil?
+		return self.receipts_for(participant).archive.count!=0
 	end
 
 	def is_read?(participant)
