@@ -1,5 +1,6 @@
 class Conversation < ActiveRecord::Base
-  attr_accessible :subject
+  acts_as_taggable
+  attr_accessible :subject, :tag_list
 
 	has_many :messages, :dependent => :destroy
 	has_many :receipts, :through => :messages
